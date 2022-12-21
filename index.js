@@ -19,15 +19,27 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    const testInfoCollection = client
-      .db("selectTestDB")
-      .collection("allTestInfo");
+    const usersCollection = client.db("registerUsersDB").collection("users");
 
-    //  find all testInfo
-    app.get("/allTestInfo", async (req, res) => {
+    //  save user to Db
+    app.post("/user", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(user);
+    });
+    //  load all users
+    app.get("/users", async (req, res) => {
       const query = {};
-      const allTestInfo = await testInfoCollection.find(query).toArray();
-      res.send(allTestInfo);
+      const users = await usersCollection.find(query).toArray();
+      res.send(users);
+    });
+
+    // load specific user info
+    app.get("/users/loginUser", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      res.send(user);
     });
   } finally {
   }
@@ -36,7 +48,7 @@ run().catch((err) => console.error(err));
 
 // testing code for server
 app.get("/", (req, res) => {
-  res.send("Triedge Platform Services Private Limited server is running");
+  res.send("UNIO Labs server is running");
 });
 app.listen(port, () => {
   console.log("listening on port " + port);

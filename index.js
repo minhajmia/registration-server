@@ -27,12 +27,6 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(user);
     });
-    //  load all users
-    app.get("/users", async (req, res) => {
-      const query = {};
-      const users = await usersCollection.find(query).toArray();
-      res.send(users);
-    });
 
     // load specific user info
     app.get("/users/loginUser", async (req, res) => {
